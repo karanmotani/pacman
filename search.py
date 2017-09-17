@@ -86,17 +86,146 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
+
+    from util import Stack
+    from game import Directions
+
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    print '\n\n----------------------X-----------------------\n\n'
+    print "Start:", problem.getStartState()
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    print '\n\n----------------------X-----------------------\n\n'
+    
+
+    south = Directions.SOUTH
+    west = Directions.WEST
+    north = Directions.NORTH
+    east = Directions.EAST
+
+    startState = problem.getStartState()
+    visitedStates = set([startState])
+    stack = Stack()
+    pathStack = Stack()
+    stack.push(startState)
+    pathStack.push([])
+
+    if problem.isGoalState(startState):
+        return False
+
+    while not stack.isEmpty():
+
+        currState = stack.pop()
+        path = pathStack.pop()
+        # print '\n'
+        # print 'Current state: ', currState
+        # print 'Current path: ', path
+
+        if problem.isGoalState(currState):
+            return path
+
+        # Get successors
+        successors = problem.getSuccessors(currState)
+        for successor in successors:
+            succCordinates = successor[0]
+            succDirection = successor[1]
+
+            tempPath = list(path)
+            
+            # Node not visited
+            if not succCordinates in visitedStates:
+                visitedStates.add(succCordinates)
+
+                if succDirection == 'North':
+                    tempPath.append(north)
+
+                elif succDirection == 'South':
+                    tempPath.append(south)
+
+                elif succDirection == 'East':
+                    tempPath.append(east)
+
+                elif succDirection == 'West':
+                    tempPath.append(west)
+
+                stack.push(succCordinates)
+                pathStack.push(tempPath)
+
+    return False
+
+    # util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    from util import Queue
+    from game import Directions
+
+    south = Directions.SOUTH
+    west = Directions.WEST
+    north = Directions.NORTH
+    east = Directions.EAST
+
+    startState = problem.getStartState()
+    visitedStates = set([startState])
+    queue = Queue()
+    pathQueue = Queue()
+    queue.push(startState)
+    pathQueue.push([])
+
+    if problem.isGoalState(startState):
+        return False
+
+    while not queue.isEmpty():
+
+        currState = queue.pop()
+        path = pathQueue.pop()
+        # print '\n'
+        # print 'Current state: ', currState
+        # print 'Current path: ', path
+
+        if problem.isGoalState(currState):
+            return path
+
+        # Get successors
+        successors = problem.getSuccessors(currState)
+        for successor in successors:
+            succCordinates = successor[0]
+            succDirection = successor[1]
+
+            tempPath = list(path)
+            
+            # Node not visited
+            if not succCordinates in visitedStates:
+                visitedStates.add(succCordinates)
+
+                if succDirection == 'North':
+                    tempPath.append(north)
+
+                elif succDirection == 'South':
+                    tempPath.append(south)
+
+                elif succDirection == 'East':
+                    tempPath.append(east)
+
+                elif succDirection == 'West':
+                    tempPath.append(west)
+
+                queue.push(succCordinates)
+                pathQueue.push(tempPath)
+
+    return False
+
+
+
+    # util.raiseNotDefined()
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
