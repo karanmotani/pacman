@@ -86,147 +86,85 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
-
-    from util import Stack
-    from game import Directions
-
     "*** YOUR CODE HERE ***"
+    """
+    The state can be represented by the pair of the coordinates of the given position and the path it took to reach there. This can be pushed on stack while the node is encountered first and poppped one by one.
 
-    print '\n\n----------------------X-----------------------\n\n'
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
-    print '\n\n----------------------X-----------------------\n\n'
-    
-
-    south = Directions.SOUTH
-    west = Directions.WEST
-    north = Directions.NORTH
-    east = Directions.EAST
-
-    startState = problem.getStartState()
-    visitedStates = set([startState])
-    stack = Stack()
-    pathStack = Stack()
-    stack.push(startState)
-    pathStack.push([])
-
-    if problem.isGoalState(startState):
-        return False
-
+    The visitedNodes array will be used to avoid visiting the same state twice. It will maintain a list of all the nodes which have been visited.
+    """
+    visited = []
+    path = []
+    stack = util.Stack()
+    start_state = problem.getStartState()
+    stack.push((start_state,path))
     while not stack.isEmpty():
-
-        currState = stack.pop()
-        path = pathStack.pop()
-        # print '\n'
-        # print 'Current state: ', currState
-        # print 'Current path: ', path
-
-        if problem.isGoalState(currState):
-            return path
-
-        # Get successors
-        successors = problem.getSuccessors(currState)
-        for successor in successors:
-            succCordinates = successor[0]
-            succDirection = successor[1]
-
-            tempPath = list(path)
-            
-            # Node not visited
-            if not succCordinates in visitedStates:
-                visitedStates.add(succCordinates)
-
-                if succDirection == 'North':
-                    tempPath.append(north)
-
-                elif succDirection == 'South':
-                    tempPath.append(south)
-
-                elif succDirection == 'East':
-                    tempPath.append(east)
-
-                elif succDirection == 'West':
-                    tempPath.append(west)
-
-                stack.push(succCordinates)
-                pathStack.push(tempPath)
-
-    return False
-
-    # util.raiseNotDefined()
+        curr_state, path = stack.pop()
+        if curr_state not in visited:
+            visited.append(curr_state)
+            if problem.isGoalState(curr_state):
+                return path
+            for state, direction, cost in problem.getSuccessors(curr_state):
+                stack.push((state, path+[direction]))
+    return path
+        
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-
-    from util import Queue
-    from game import Directions
-
-    south = Directions.SOUTH
-    west = Directions.WEST
-    north = Directions.NORTH
-    east = Directions.EAST
-
-    startState = problem.getStartState()
-    visitedStates = set([startState])
-    queue = Queue()
-    pathQueue = Queue()
-    queue.push(startState)
-    pathQueue.push([])
-
-    if problem.isGoalState(startState):
-        return False
-
+#  
+#     startState = problem.getStartState()
+#     queue.push((startState, path, visitedNodes))
+#     while queue.isEmpty() == False:
+#         currentState, path, visitedNodes = queue.pop()
+#         
+#         if currentState not in visitedNodes:
+#             successors = problem.getSuccessors(currentState)
+              # if problem.isGoalState(currentState):
+#             return path
+#             for sucessorNode, action, stepCost in successors :
+#                 queue.push((sucessorNode, path + [action], visitedNodes + [sucessorNode]))
+#     return []
+    visited = []
+    path = []
+    queue = util.Queue()
+    start_state = problem.getStartState()
+    queue.push((start_state,path))
     while not queue.isEmpty():
-
-        currState = queue.pop()
-        path = pathQueue.pop()
-        # print '\n'
-        # print 'Current state: ', currState
-        # print 'Current path: ', path
-
-        if problem.isGoalState(currState):
-            return path
-
-        # Get successors
-        successors = problem.getSuccessors(currState)
-        for successor in successors:
-            succCordinates = successor[0]
-            succDirection = successor[1]
-
-            tempPath = list(path)
-            
-            # Node not visited
-            if not succCordinates in visitedStates:
-                visitedStates.add(succCordinates)
-
-                if succDirection == 'North':
-                    tempPath.append(north)
-
-                elif succDirection == 'South':
-                    tempPath.append(south)
-
-                elif succDirection == 'East':
-                    tempPath.append(east)
-
-                elif succDirection == 'West':
-                    tempPath.append(west)
-
-                queue.push(succCordinates)
-                pathQueue.push(tempPath)
-
-    return False
-
-
-
-    # util.raiseNotDefined()
+        curr_state, path = queue.pop()
+        if curr_state not in visited:
+            visited.append(curr_state)
+            if problem.isGoalState(curr_state):
+                return path
+            for state, direction, cost in problem.getSuccessors(curr_state):
+                queue.push((state, path+[direction]))
+    return path
 
 def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-
-    util.raiseNotDefined()
+#     """Search the node of least total cost first."""
+    
+#     """
+#     PriorityQueue will be added state and the path cost required to reach that state (0 for startState).
+#     """
+    visited = list()
+    path =list()
+    start_state = problem.getStartState()
+    pq = util.PriorityQueue()
+    pq.push((start_state,path),0)
+    
+    while not pq.isEmpty() :
+            best_cost_state,directions_from_start= pq.pop()
+                        
+            if problem.isGoalState(best_cost_state):
+                    return directions_from_start
+					
+            if best_cost_state not in visited :
+                visited.append(best_cost_state)
+                for successor,parent_sucessor_dist,stepCost in problem.getSuccessors(best_cost_state):
+                	    updated_directions = directions_from_start + [parent_sucessor_dist]
+                	    cost_of_reaching =  problem.getCostOfActions(updated_directions)
+                	    pq.push((successor, updated_directions ) , cost_of_reaching)
+    
+    return []
 
 def nullHeuristic(state, problem=None):
     """
@@ -237,11 +175,38 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
 
+    """
+    PriorityQueue will be states according to the evaulation function using path cost and manhattan distance cost required to reach that state (0 + manhattan distance for start state). Rets all similar to ucs
+    """
+
+    start_state = problem.getStartState()
+    visited= list()
+    pq =util.PriorityQueue()
+    pq.push((start_state,list(),0),0)
+    best_cost_state,directions,tot_cost= pq.pop()
+    visited.append((start_state,0))
+	
+    while (not problem.isGoalState(best_cost_state)) :
+			for successor,parent_sucessor_dir,stepCost in problem.getSuccessors(best_cost_state):
+				new_directions = directions + [parent_sucessor_dir]
+				cost_total = problem.getCostOfActions(new_directions)
+				flag = False
+				
+				for i in range(len(visited)):
+				  temp_state,temp_cost=visited[i] #checks if node is at same position of successor
+				  if (successor==temp_state) and (cost_total>=temp_cost):
+					flag=True
+				if (not flag):
+				  cost_total=problem.getCostOfActions(directions+[parent_sucessor_dir])
+				  pq.push((successor,directions+[parent_sucessor_dir],cost_total),cost_total+heuristic(successor,problem))
+				  visited.append((successor,cost_total))
+			best_cost_state,directions,tot_cost=pq.pop()
+    return  directions
 
 # Abbreviations
+
+
 bfs = breadthFirstSearch
 dfs = depthFirstSearch
 astar = aStarSearch
